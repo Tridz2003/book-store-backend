@@ -18,7 +18,7 @@ const fileStorage = multer.diskStorage({
   },  
   filename: (req, file, cb) => {
     const date = new Date().toISOString().replace(/:/g, '-');
-    cb(null, new Date().toISOString() + '-' + file.originalname);
+    cb(null, date + '-' + file.originalname);
   }
 });
 
@@ -45,7 +45,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'))
+app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('hinhAnh'))
 
 app.use('/admin', adminRoutes);
 app.use('/shop', shopRoutes);
