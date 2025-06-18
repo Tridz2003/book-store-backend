@@ -6,11 +6,11 @@ const ChiTietDonHang = sequelize.define('chitietdonhang', {
     chiTietDonHangId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true
     },
     donHangId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
             model: 'donhang', // Tên bảng người dùng
             key: 'donHangId' // Khóa chính của bảng người dùng
@@ -20,6 +20,7 @@ const ChiTietDonHang = sequelize.define('chitietdonhang', {
     },
     sachId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
             model: 'sach', // Tên bảng người dùng
             key: 'sachId' // Khóa chính của bảng người dùng

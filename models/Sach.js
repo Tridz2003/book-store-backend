@@ -18,7 +18,6 @@ const Sach = sequelize.define('sach', {
     donGia: {type: Sequelize.DOUBLE, allowNull: false, defaultValue: 0},
     moTa: {type: Sequelize.STRING},
     hinhAnh: {type: Sequelize.STRING}
-
 }, {
     tableName: 'sach' // Chỉ định tên bảng chính xác
 });

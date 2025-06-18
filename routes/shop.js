@@ -13,9 +13,6 @@ router.get('/sachs', sachController.getSachs);
 // GET /shop/sach/:sachId - Xem chi tiết sách (tất cả người dùng)
 router.get('/sach/:sachId', sachController.getSach);
 
-// GET /shop/don-hang - Lấy danh sách đơn hàng của người dùng (tất cả người dùng)
-router.get('/don-hang', isAuth, shopController.getDonHang);
-
 // POST /shop/add-gio-hang - Thêm sách vào giỏ hàng (tất cả người dùng)
 router.post('/add-gio-hang', isAuth,
     [

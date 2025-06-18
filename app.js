@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 
 const sequelize = require('./util/database');
-require('./models/associations');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -16,19 +15,19 @@ const app = express();
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images')
-  },
+  },  
   filename: (req, file, cb) => {
     const date = new Date().toISOString().replace(/:/g, '-');
-    cb(null, date + '-' + file.originalname);
+    cb(null, new Date().toISOString() + '-' + file.originalname);
   }
 });
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/png' ||
-    file.mimetype === 'image/jpg' ||
+  if(file.mimetype === 'image/png' || 
+    file.mimetype === 'image/jpg' || 
     file.mimetype === 'image/jpeg') {
-    cb(null, true);
-  } else {
+      cb(null, true);
+  }else{
     cb(null, false);
   }
 }
@@ -38,11 +37,11 @@ app.use((req, res, next) => {
   res.setHeader(
     'Access-Control-Allow-Methods',
     'OPTIONS, GET, POST, PUT, PATCH, DELETE'
-  ); res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  );  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
 
-app.use(bodyParser.json({}));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
@@ -60,15 +59,12 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
-sequelize
-  .sync()
-  // .sync({ force: true }) // Xóa và tạo lại bảng mỗi lần khởi động ứng dụng
+sequelize.sync()
+//   .sync({ force: true }) // Xóa và tạo lại bảng mỗi lần khởi động ứng dụng
   .then(result => {
     console.log('Database synced successfully');
     app.listen(3000);
   })
   .catch(err => {
     console.log(err);
-  });
-
-// app.listen(3000);
+    });

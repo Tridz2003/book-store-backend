@@ -82,10 +82,10 @@ exports.login = (req, res, next) => {
           vaiTro: loadedNguoiDung.vaiTro // 'User' or 'Admin'
         },
         'somesupersecretsecret',
-        { expiresIn: '12h' }
+        { expiresIn: '1h' }
       );
-      res.status(200).json({
-        token: token,
+      res.status(200).json({ 
+        token: token, 
         nguoiDungId: loadedNguoiDung.nguoiDungId.toString(),
         vaiTro: loadedNguoiDung.vaiTro // 'User' or 'Admin'
       });
