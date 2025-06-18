@@ -1,4 +1,6 @@
 const DonHang = require('../models/DonHang');
+const ChiTietDonHang = require('../models/ChiTietDonHang');
+const Sach = require('../models/Sach');
 const { validationResult } = require('express-validator');
 
 exports.addDonHang = (req, res, next) => {
@@ -7,7 +9,7 @@ exports.addDonHang = (req, res, next) => {
     const sdt = req.body.sdt;
     const ghiChu = req.body.ghiChu;
     const phuongThucThanhToan = req.body.phuongThucThanhToan || 'COD'; // Mặc định là COD
-    const trangThai = 'deliveried'; // Mặc định là đã nhận hàng
+    const trangThai = 'completed'; // Mặc định là đã nhận hàng
     const tongTien = req.body.tongTien || 0; // Mặc định là 0 nếu không có
 
     const donhang = new DonHang({
@@ -21,11 +23,43 @@ exports.addDonHang = (req, res, next) => {
         tongTien: tongTien
     });
 
+    const chiTietDonHang = req.body.chiTietDonHang.map(item => ({
+        ...item,
+        donHangId: donhang.donHangId
+    }));
+
     return donhang.save()
-        .then(result => {
+        .then(async result => {
+            await ChiTietDonHang.bulkCreate(chiTietDonHang);
             res.status(201).json({
                 message: 'Đơn hàng đã được tạo thành công!',
-                donHang: result
+                donHang: result,
+                chiTietDonHang: chiTietDonHang
+            });
+        })
+
+        .catch(err => {
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        });
+}
+
+exports.getDonHangs = (req, res, next) => {
+    DonHang.findAll({
+        include: [{
+            model: ChiTietDonHang,
+            include: [{
+                model: Sach
+            }]
+        }],
+        order: [['ngayDat', 'DESC']]
+    })
+        .then(donhangs => {
+            res.status(200).json({
+                message: 'Lay danh sach don hang thanh cong!',
+                donhangs: donhangs
             });
         })
         .catch(err => {
@@ -35,11 +69,10 @@ exports.addDonHang = (req, res, next) => {
             next(err);
         });
 }
-
 exports.updateDonHang = (req, res, next) => {
     const donHangId = req.params.donHangId;
     const errors = validationResult(req);
-    if(!errors.isEmpty()){
+    if (!errors.isEmpty()) {
         const error = new Error('Loi cu phap.');
         error.statusCode = 422;
         error.data = errors.array();
@@ -48,7 +81,7 @@ exports.updateDonHang = (req, res, next) => {
     const trangThai = req.body.trangThai;
     return DonHang.findByPk(donHangId)
         .then(donhang => {
-            if(!donhang){
+            if (!donhang) {
                 const error = new Error('Khong tim thay don hang.');
                 error.statusCode = 404;
                 throw error;
@@ -74,7 +107,7 @@ exports.deleteDonHang = (req, res, next) => {
     const donHangId = req.params.donHangId;
     return DonHang.findByPk(donHangId)
         .then(donhang => {
-            if(!donhang){
+            if (!donhang) {
                 const error = new Error('Khong tim thay don hang.');
                 error.statusCode = 404;
                 throw error;
