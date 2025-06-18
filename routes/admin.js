@@ -69,7 +69,7 @@ router.get('/find-sach', isAuth, isAdmin, sachController.findSach);
 router.post('/ban-hang', isAuth, isAdmin, adminController.addDonHang);
 
 // GET /admin/don-hang - Lấy danh sác h đơn hàng (chỉ Admin)
-// router.get('/don-hang', isAuth, isAdmin, donHangController.getDonHangs);
+router.get('/don-hang', isAuth, isAdmin, adminController.getDonHangs);
 
 // PUT /admin/update-don-hang/:donHangId - Cập nhật đơn hàng (chỉ Admin)
 router.put('/update-don-hang/:donHangId',
@@ -78,7 +78,7 @@ router.put('/update-don-hang/:donHangId',
     [
         body('trangThai')
             .trim()
-            .isIn(['pending', 'deliveried', 'cancelled'])
+            .isIn(['pending', 'confirmed','shipping', 'delivered', 'completed', 'cancelled'])
             .withMessage('Trang thai khong hop le')
     ],
     adminController.updateDonHang
